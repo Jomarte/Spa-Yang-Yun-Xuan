@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="no-js">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marcar Sessão | Yang Yun Xuan SPA — 养云轩</title>
+  <meta name="description"
+    content="Reserve a sua sessão no Yang Yun Xuan SPA em Lisboa. Massagem relaxante, terapêutica, reflexologia, Tui Na, pedras quentes e Gua Sha.">
+  <meta property="og:title" content="Marcar Sessão | Yang Yun Xuan SPA">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_PT">
+  <link rel="canonical" href="https://yangyunxuan.pt/booking.html">
+
+  <!-- Estilos globais partilhados (navbar, buttons, footer, tokens) -->
+  <link rel="stylesheet" href="css/styles.css">
+  <script>document.documentElement.classList.remove('no-js');</script>
+
+  <style>
+    /* ================================================================
+       BOOKING PAGE — Estilos específicos da página de marcação
+       Herda variáveis de css/styles.css
+    ================================================================ */
+
+    /* ---- Layout principal: sidebar + formulário ---- */
+    .booking-page {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      margin-top: var(--nav-height);
+      min-height: calc(100vh - var(--nav-height));
+      align-items: start;
+    }
+
+    /* ================================================================
+       SIDEBAR — painel esquerdo fixo com info do tratamento seleccionado
+    ================================================================ */
+    .bk-sidebar {
+      position: sticky;
+      top: var(--nav-height);
+      height: calc(100vh - var(--nav-height));
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--color-primary-dark);
+      padding: var(--sp-8) var(--sp-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+      scrollbar-width: none;
+    }
+
+    .bk-sidebar::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Marca d'água decorativa com os caracteres chineses */
+    .bk-sidebar::before {
+      content: '养云轩';
+      position: absolute;
+      bottom: -1rem;
+      right: -1rem;
+      font-family: var(--font-heading);
+      font-size: 9rem;
+      color: rgba(255, 255, 255, 0.035);
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .bk-sidebar-brand {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--color-accent-light);
+      letter-spacing: 0.04em;
+      position: relative;
+    }
+
+    .bk-sidebar-brand small {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.3);
+      margin-top: 3px;
+    }
+
+    .bk-sidebar-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Cartão do tratamento seleccionado — actualizado por JS */
+    .bk-treatment-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: var(--sp-4);
+      position: relative;
+      transition: border-color var(--duration-normal) var(--ease-smooth),
+        background var(--duration-normal) var(--ease-smooth);
+    }
+
+    .bk-treatment-card.has-treatment {
+      border-color: rgba(201, 168, 76, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .bk-treat-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: var(--sp-2);
+    }
+
+    .bk-treat-name {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 3px;
+      min-height: 1.5em;
+    }
+
+    .bk-treat-cat {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: var(--sp-3);
+      min-height: 1em;
+    }
+
+    .bk-treat-desc {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.55);
+      margin-bottom: var(--sp-3);
+      min-height: 3em;
+    }
+
+    .bk-treat-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-2);
+    }
+
+    .bk-meta-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem var(--sp-2);
+    }
+
+    .bk-meta-pill-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.3);
+      margin-bottom: 2px;
+    }
+
+    .bk-meta-pill-value {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-accent-light);
+    }
+
+    /* Citação decorativa */
+    .bk-sidebar-quote {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.25);
+      padding-left: var(--sp-3);
+      border-left: 2px solid rgba(201, 168, 76, 0.25);
+      position: relative;
+    }
+
+    /* Contactos no fundo da sidebar */
+    .bk-sidebar-contact {
+      margin-top: auto;
+      padding-top: var(--sp-4);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .bk-contact-heading {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.25);
+      margin-bottom: var(--sp-2);
+    }
+
+    .bk-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 0.45rem;
+    }
+
+    .bk-contact-item svg {
+      color: var(--color-accent);
+      flex-shrink: 0;
+    }
+
+    /* ================================================================
+       ÁREA DO FORMULÁRIO — painel direito, scrollável
+    ================================================================ */
+    .bk-form-area {
+      background: var(--color-bg);
+      padding: var(--sp-10) var(--sp-10) var(--sp-16);
+    }
+
+    /* Cabeçalho do formulário */
+    .bk-form-header {
+      max-width: 640px;
+      margin-bottom: var(--sp-8);
+    }
+
+    .bk-page-title {
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      font-weight: 600;
+      color: var(--color-primary-dark);
+      line-height: 1.1;
+      margin-bottom: var(--sp-2);
+    }
+
+    .bk-page-title em {
+      font-style: italic;
+      color: var(--color-primary);
+    }
+
+    .bk-page-sub {
+      font-size: 0.95rem;
+      color: var(--color-text-muted);
+      line-height: 1.75;
+    }
+
+    /* Formulário com largura máxima */
+    #bookingForm {
+      max-width: 640px;
+    }
+
+    /* ---- Secções do formulário ---- */
+    .bk-section {
+      padding-bottom: var(--sp-8);
+      margin-bottom: var(--sp-8);
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .bk-section:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .bk-section-head {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-5);
+    }
+
+    .bk-step {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .bk-section-label {
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--color-text-light);
+    }
+
+    /* ---- Campos ---- */
+    .bk-field {
+      margin-bottom: var(--sp-4);
+    }
+
+    .bk-field:last-child {
+      margin-bottom: 0;
+    }
+
+    .bk-lbl {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--color-text-muted);
+      margin-bottom: 0.45rem;
+    }
+
+    .bk-lbl .req {
+      color: var(--color-accent-dark);
+      margin-left: 2px;
+    }
+
+    /* Inputs, selects e textarea */
+    .bk-input,
+    .bk-select,
+    .bk-textarea {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-family: var(--font-body);
+      font-size: var(--fs-body);
+      color: var(--color-text);
+      background: var(--color-white);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color var(--duration-fast) var(--ease-smooth),
+        box-shadow var(--duration-fast) var(--ease-smooth);
+    }
+
+    .bk-input::placeholder,
+    .bk-textarea::placeholder {
+      color: var(--color-text-light);
+    }
+
+    .bk-input:hover,
+    .bk-select:hover,
+    .bk-textarea:hover {
+      border-color: rgba(91, 42, 78, 0.4);
+    }
+
+    .bk-input:focus,
+    .bk-select:focus,
+    .bk-textarea:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(91, 42, 78, 0.1);
+    }
+
+    /* Estado de erro */
+    .bk-field.is-error .bk-input,
+    .bk-field.is-error .bk-select,
+    .bk-field.is-error .bk-textarea {
+      border-color: #C94C4C;
+      box-shadow: 0 0 0 3px rgba(201, 76, 76, 0.1);
+    }
+
+    .bk-err {
+      display: none;
+      font-size: 0.76rem;
+      color: #C94C4C;
+      margin-top: 0.3rem;
+    }
+
+    .bk-field.is-error .bk-err {
+      display: block;
+    }
+
+    /* Select com seta personalizada */
+    .bk-select-wrap {
+      position: relative;
+    }
+
+    .bk-select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 9px;
+      height: 5px;
+      background: var(--color-primary);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      pointer-events: none;
+    }
+
+    /* Textarea */
+    .bk-textarea {
+      resize: vertical;
+      min-height: 96px;
+      line-height: 1.65;
+    }
+
+    /* Grelha de 2 colunas para campos lado a lado */
+    .bk-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-4);
+    }
+
+    /* ---- Horários disponíveis ---- */
+    .bk-slots-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+    }
+
+    /* Botão de horário individual */
+    .bk-slot {
+      padding: 0.6rem 0.4rem;
+      text-align: center;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      background: var(--color-white);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      user-select: none;
+      transition: border-color var(--duration-fast) var(--ease-smooth),
+        background var(--duration-fast) var(--ease-smooth),
+        color var(--duration-fast) var(--ease-smooth),
+        box-shadow var(--duration-fast) var(--ease-smooth);
+    }
+
+    .bk-slot:hover:not(.bk-slot--occ) {
+      border-color: var(--color-primary-light);
+      color: var(--color-primary);
+      background: rgba(91, 42, 78, 0.04);
+    }
+
+    .bk-slot--sel {
+      background: var(--color-primary) !important;
+      border-color: var(--color-primary) !important;
+      color: #fff !important;
+      box-shadow: 0 2px 10px rgba(91, 42, 78, 0.25);
+    }
+
+    .bk-slot--occ {
+      background: var(--color-bg);
+      border-color: var(--color-border-light);
+      color: var(--color-text-light);
+      opacity: 0.45;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    /* Estado vazio / instrução */
+    .bk-slots-placeholder {
+      padding: var(--sp-3) var(--sp-4);
+      background: var(--color-bg-warm);
+      border: 1.5px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 0.84rem;
+      color: var(--color-text-light);
+      text-align: center;
+    }
+
+    /* Legenda dos horários */
+    .bk-slots-legend {
+      display: flex;
+      gap: var(--sp-4);
+      margin-top: var(--sp-2);
+    }
+
+    .bk-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      color: var(--color-text-light);
+    }
+
+    .bk-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .bk-legend-dot--avail {
+      background: var(--color-white);
+      border: 1.5px solid var(--color-border);
+    }
+
+    .bk-legend-dot--sel {
+      background: var(--color-primary);
+    }
+
+    .bk-legend-dot--occ {
+      background: var(--color-bg);
+      border: 1.5px solid var(--color-border-light);
+    }
+
+    /* ---- Cartões de pagamento ---- */
+    .bk-pay-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-3);
+    }
+
+    .bk-pay-card {
+      position: relative;
+      padding: var(--sp-4);
+      background: var(--color-white);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: border-color var(--duration-fast) var(--ease-smooth),
+        box-shadow var(--duration-fast) var(--ease-smooth),
+        background var(--duration-fast) var(--ease-smooth);
+    }
+
+    .bk-pay-card:hover {
+      border-color: rgba(91, 42, 78, 0.4);
+    }
+
+    .bk-pay-card.is-sel {
+      border-color: var(--color-primary);
+      background: rgba(91, 42, 78, 0.03);
+      box-shadow: 0 0 0 3px rgba(91, 42, 78, 0.1);
+    }
+
+    /* Input radio escondido */
+    .bk-pay-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Indicador circular */
+    .bk-pay-dot {
+      position: absolute;
+      top: var(--sp-3);
+      right: var(--sp-3);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border);
+      transition: border-color var(--duration-fast), background var(--duration-fast);
+    }
+
+    .bk-pay-card.is-sel .bk-pay-dot {
+      border-color: var(--color-primary);
+      background: var(--color-primary);
+    }
+
+    .bk-pay-card.is-sel .bk-pay-dot::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .bk-pay-icon {
+      font-size: 1.5rem;
+      margin-bottom: var(--sp-2);
+      line-height: 1;
+    }
+
+    .bk-pay-title {
+      font-size: 0.87rem;
+      font-weight: 600;
+      color: var(--color-primary-dark);
+      margin-bottom: 3px;
+    }
+
+    .bk-pay-desc {
+      font-size: 0.76rem;
+      color: var(--color-text-muted);
+      line-height: 1.55;
+    }
+
+    /* Mensagem de erro de pagamento */
+    #errPagamento {
+      display: none;
+      font-size: 0.76rem;
+      color: #C94C4C;
+      margin-top: 0.4rem;
+    }
+
+    #errPagamento.visible {
+      display: block;
+    }
+
+    /* ---- Checkbox de termos ---- */
+    .bk-check-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-2);
+      cursor: pointer;
+    }
+
+    .bk-check-wrap input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .bk-check-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border: 2px solid var(--color-border);
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color var(--duration-fast), background var(--duration-fast);
+    }
+
+    .bk-check-wrap:has(input:checked) .bk-check-box {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    .bk-check-wrap:has(input:checked) .bk-check-box::after {
+      content: '';
+      width: 5px;
+      height: 9px;
+      border-right: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(40deg) translateY(-1px);
+      display: block;
+    }
+
+    .bk-check-wrap.is-error .bk-check-box {
+      border-color: #C94C4C;
+    }
+
+    .bk-check-text {
+      font-size: 0.82rem;
+      color: var(--color-text-muted);
+      line-height: 1.65;
+    }
+
+    .bk-check-text a {
+      color: var(--color-primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* ---- Botão de submeter ---- */
+    .bk-submit-area {
+      margin-top: var(--sp-6);
+    }
+
+    .bk-submit {
+      width: 100%;
+      padding: 1rem var(--sp-6);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #fff;
+      background: var(--color-primary);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      box-shadow: 0 4px 18px rgba(91, 42, 78, 0.28);
+      transition: background var(--duration-normal) var(--ease-smooth),
+        transform var(--duration-fast) var(--ease-smooth),
+        box-shadow var(--duration-normal) var(--ease-smooth);
+    }
+
+    .bk-submit:hover {
+      background: var(--color-primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(91, 42, 78, 0.3);
+    }
+
+    .bk-submit:active {
+      transform: translateY(0);
+    }
+
+    .bk-submit:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .bk-submit-note {
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--color-text-light);
+      margin-top: var(--sp-2);
+    }
+
+    /* ================================================================
+       OVERLAY DE SUCESSO — aparece após submissão bem-sucedida
+    ================================================================ */
+    .bk-success {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: var(--color-bg);
+      overflow-y: auto;
+      padding: var(--sp-8) var(--sp-4);
+    }
+
+    .bk-success.is-visible {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .bk-success-inner {
+      max-width: 520px;
+      width: 100%;
+      margin-top: var(--sp-6);
+      text-align: center;
+      animation: successIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes successIn {
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .bk-success-check {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(91, 42, 78, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--sp-4);
+    }
+
+    .bk-success-check svg {
+      color: var(--color-primary);
+    }
+
+    .bk-success-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 600;
+      color: var(--color-primary-dark);
+      margin-bottom: var(--sp-2);
+    }
+
+    .bk-success-sub {
+      font-size: 0.95rem;
+      color: var(--color-text-muted);
+      line-height: 1.75;
+      margin-bottom: var(--sp-6);
+    }
+
+    /* Resumo da marcação */
+    .bk-success-card {
+      background: var(--color-bg-warm);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      padding: var(--sp-1) var(--sp-4);
+      margin-bottom: var(--sp-6);
+      text-align: left;
+    }
+
+    .bk-sum-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: var(--sp-2) 0;
+    }
+
+    .bk-sum-row+.bk-sum-row {
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    .bk-sum-label {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      font-weight: 500;
+    }
+
+    .bk-sum-value {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--color-text);
+      text-align: right;
+      max-width: 60%;
+    }
+
+    /* Botões do sucesso */
+    .bk-success-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+
+    .bk-wa-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      padding: 0.9rem var(--sp-6);
+      background: #25D366;
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: background var(--duration-fast), transform var(--duration-fast);
+    }
+
+    .bk-wa-btn:hover {
+      background: #1DB954;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .bk-back-btn {
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      font-size: 0.84rem;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      padding: var(--sp-1) 0;
+      transition: color var(--duration-fast);
+    }
+
+    .bk-back-btn:hover {
+      color: var(--color-primary);
+    }
+
+    /* ================================================================
+       RESPONSIVO
+    ================================================================ */
+    @media (max-width: 960px) {
+      .booking-page {
+        grid-template-columns: 1fr;
+      }
+
+      .bk-sidebar {
+        position: static;
+        height: auto;
+        padding: var(--sp-5) var(--sp-4);
+        flex-direction: column;
+        gap: var(--sp-3);
+      }
+
+      /* Simplifica o cartão de tratamento em mobile */
+      .bk-treat-desc {
+        display: none;
+      }
+
+      .bk-sidebar-quote {
+        display: none;
+      }
+
+      .bk-sidebar-contact {
+        display: none;
+      }
+
+      .bk-form-area {
+        padding: var(--sp-6) var(--sp-4) var(--sp-12);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .bk-2col {
+        grid-template-columns: 1fr;
+      }
+
+      .bk-pay-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bk-slots-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 380px) {
+      .bk-slots-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="nav-overlay" id="navOverlay"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar scrolled" id="navbar" role="navigation" aria-label="Navegação principal">
+    <div class="container">
+      <a href="index.html" class="nav-brand" aria-label="Yang Yun Xuan SPA — Página inicial">
+        Yang Yun Xuan <span class="nav-brand-cn">养云轩</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="quem-somos.html">Quem Somos</a>
+        <a href="tratamentos.html">Tratamentos</a>
+        <a href="booking.html" class="nav-cta" aria-current="page" data-event="cta_book_click"
+          style="background:var(--color-accent);color:var(--color-primary-dark);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+          </svg>
+          Marcar Agora
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== LAYOUT PRINCIPAL ===== -->
+  <div class="booking-page">
+
+    <!-- ---- SIDEBAR ---- -->
+    <aside class="bk-sidebar" aria-label="Resumo da sessão">
+
+      <div class="bk-sidebar-brand">
+        Yang Yun Xuan SPA
+        <small>养云轩 · Lisboa</small>
+      </div>
+
+      <div class="bk-sidebar-divider"></div>
+
+      <!-- Cartão do tratamento seleccionado — preenchido por JS -->
+      <div class="bk-treatment-card" id="bkCard">
+        <div class="bk-treat-eyebrow">Tratamento seleccionado</div>
+        <div class="bk-treat-name" id="bkTreatName">—</div>
+        <div class="bk-treat-cat" id="bkTreatCat"></div>
+        <p class="bk-treat-desc" id="bkTreatDesc">Selecione um tratamento para ver os detalhes.</p>
+        <div class="bk-treat-meta">
+          <div class="bk-meta-pill">
+            <div class="bk-meta-pill-label">Duração</div>
+            <div class="bk-meta-pill-value" id="bkTreatDur">—</div>
+          </div>
+          <div class="bk-meta-pill">
+            <div class="bk-meta-pill-label">Valor</div>
+            <div class="bk-meta-pill-value" id="bkTreatPrice">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bk-sidebar-quote" aria-hidden="true">
+        "O corpo sabe como descansar.<br>Nós ajudamos-o a lembrar."
+      </div>
+
+      <div class="bk-sidebar-contact">
+        <div class="bk-contact-heading">Contactos</div>
+        <div class="bk-contact-item">
+          <!-- Ícone de telefone -->
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+          </svg>
+          +351 966 451 758
+        </div>
+        <div class="bk-contact-item">
+          <!-- Ícone de localização -->
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          Rua da Palma 268, Lisboa
+        </div>
+        <div class="bk-contact-item">
+          <!-- Ícone de relógio -->
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          Seg–Dom: 10h00–20h00
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ---- ÁREA DO FORMULÁRIO ---- -->
+    <div class="bk-form-area">
+
+      <div class="bk-form-header">
+        <span class="section-label">Reserve a sua visita</span>
+        <h1 class="bk-page-title">Marcar <em>Sessão</em></h1>
+        <p class="bk-page-sub">
+          Preencha os dados abaixo e entraremos em contacto em até 24 horas para confirmar a disponibilidade e os
+          detalhes da sua sessão.
+        </p>
+      </div>
+
+      <form id="bookingForm" novalidate autocomplete="on">
+
+        <!-- ==================== SECÇÃO 1: TRATAMENTO ==================== -->
+        <div class="bk-section">
+          <div class="bk-section-head">
+            <div class="bk-step" aria-hidden="true">1</div>
+            <span class="bk-section-label">O seu tratamento</span>
+          </div>
+
+          <div class="bk-field" id="wrapTratamento">
+            <label class="bk-lbl" for="fTratamento">
+              Tipo de tratamento <span class="req" aria-hidden="true">*</span>
+            </label>
+            <div class="bk-select-wrap">
+              <!-- O tratamento pode ser pré-seleccionado via URL: ?tratamento=massagem-relaxante -->
+              <select class="bk-select" id="fTratamento" name="tratamento" required>
+                <option value="">— Selecionar tratamento —</option>
+                <option value="massagem-relaxante">Massagem Relaxante</option>
+                <option value="massagem-terapeutica">Massagem Terapêutica</option>
+                <option value="reflexologia">Reflexologia</option>
+                <option value="tui-na">Tui Na</option>
+                <option value="pedras-quentes">Pedras Quentes</option>
+                <option value="gua-sha">Gua Sha</option>
+              </select>
+            </div>
+            <span class="bk-err">Por favor, selecione um tratamento.</span>
+          </div>
+        </div>
+
+        <!-- ==================== SECÇÃO 2: DATA & HORA ==================== -->
+        <div class="bk-section">
+          <div class="bk-section-head">
+            <div class="bk-step" aria-hidden="true">2</div>
+            <span class="bk-section-label">Data &amp; Hora</span>
+          </div>
+
+          <!-- Data — datas passadas não são permitidas (definido por JS via min) -->
+          <div class="bk-field" id="wrapData">
+            <label class="bk-lbl" for="fData">
+              Data pretendida <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input type="date" class="bk-input" id="fData" name="data" required>
+            <span class="bk-err">Por favor, escolha uma data válida.</span>
+          </div>
+
+          <!-- Horários — gerados dinamicamente ao escolher a data -->
+          <div class="bk-field" id="wrapHora">
+            <label class="bk-lbl">
+              Hora pretendida <span class="req" aria-hidden="true">*</span>
+            </label>
+            <!-- Campo oculto que guarda a hora seleccionada -->
+            <input type="hidden" id="fHora" name="hora">
+            <!-- Container dos slots — preenchido por JS -->
+            <div id="slotsContainer">
+              <div class="bk-slots-placeholder">Escolha primeiro uma data para ver os horários disponíveis.</div>
+            </div>
+            <!-- Legenda (mostrada apenas quando há slots) -->
+            <div class="bk-slots-legend" id="slotsLegend" style="display:none">
+              <span class="bk-legend-item">
+                <span class="bk-legend-dot bk-legend-dot--avail"></span>Disponível
+              </span>
+              <span class="bk-legend-item">
+                <span class="bk-legend-dot bk-legend-dot--sel"></span>Seleccionado
+              </span>
+              <span class="bk-legend-item">
+                <span class="bk-legend-dot bk-legend-dot--occ"></span>Ocupado
+              </span>
+            </div>
+            <span class="bk-err" id="errHora">Por favor, escolha um horário disponível.</span>
+          </div>
+        </div>
+
+        <!-- ==================== SECÇÃO 3: DADOS PESSOAIS ==================== -->
+        <div class="bk-section">
+          <div class="bk-section-head">
+            <div class="bk-step" aria-hidden="true">3</div>
+            <span class="bk-section-label">Os seus dados</span>
+          </div>
+
+          <div class="bk-2col">
+            <div class="bk-field" id="wrapNome">
+              <label class="bk-lbl" for="fNome">
+                Nome completo <span class="req" aria-hidden="true">*</span>
+              </label>
+              <input type="text" class="bk-input" id="fNome" name="nome" placeholder="O seu nome completo" required
+                autocomplete="name">
+              <span class="bk-err">Por favor, introduza o seu nome.</span>
+            </div>
+
+            <div class="bk-field" id="wrapEmail">
+              <label class="bk-lbl" for="fEmail">
+                Email <span class="req" aria-hidden="true">*</span>
+              </label>
+              <input type="email" class="bk-input" id="fEmail" name="email" placeholder="email@exemplo.pt" required
+                autocomplete="email">
+              <span class="bk-err">Por favor, introduza um email válido.</span>
+            </div>
+          </div>
+
+          <div class="bk-2col">
+            <div class="bk-field" id="wrapTelefone">
+              <label class="bk-lbl" for="fTelefone">
+                Telefone <span class="req" aria-hidden="true">*</span>
+              </label>
+              <input type="tel" class="bk-input" id="fTelefone" name="telefone" placeholder="+351 9XX XXX XXX" required
+                autocomplete="tel">
+              <span class="bk-err">Por favor, introduza um número de contacto.</span>
+            </div>
+
+            <div class="bk-field" id="wrapPessoas">
+              <label class="bk-lbl" for="fPessoas">
+                Número de pessoas <span class="req" aria-hidden="true">*</span>
+              </label>
+              <div class="bk-select-wrap">
+                <select class="bk-select" id="fPessoas" name="pessoas" required>
+                  <option value="1">1 pessoa</option>
+                  <option value="2">2 pessoas</option>
+                  <option value="3">3 pessoas</option>
+                  <option value="4">4 pessoas</option>
+                </select>
+              </div>
+              <span class="bk-err">Por favor, indique o número de pessoas.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== SECÇÃO 4: DETALHES ==================== -->
+        <div class="bk-section">
+          <div class="bk-section-head">
+            <div class="bk-step" aria-hidden="true">4</div>
+            <span class="bk-section-label">Detalhes adicionais</span>
+          </div>
+
+          <!-- Notas livres -->
+          <div class="bk-field">
+            <label class="bk-lbl" for="fNotas">Notas / pedidos especiais</label>
+            <textarea class="bk-textarea" id="fNotas" name="notas"
+              placeholder="Alergias, preferências de pressão, zonas a evitar, condições de saúde relevantes, etc."></textarea>
+          </div>
+
+          <!-- Método de pagamento -->
+          <div class="bk-field" id="wrapPagamento">
+            <label class="bk-lbl">
+              Método de pagamento <span class="req" aria-hidden="true">*</span>
+            </label>
+            <div class="bk-pay-grid">
+
+              <label class="bk-pay-card" id="payLocal" for="payRadioLocal">
+                <input type="radio" id="payRadioLocal" name="pagamento" value="local">
+                <div class="bk-pay-dot" aria-hidden="true"></div>
+                <div class="bk-pay-icon" aria-hidden="true">💳</div>
+                <div class="bk-pay-title">Pagar no local</div>
+                <div class="bk-pay-desc">Multibanco, numerário ou MB Way no dia da sessão.</div>
+              </label>
+
+              <label class="bk-pay-card" id="payOnline" for="payRadioOnline">
+                <input type="radio" id="payRadioOnline" name="pagamento" value="online">
+                <div class="bk-pay-dot" aria-hidden="true"></div>
+                <div class="bk-pay-icon" aria-hidden="true">🔒</div>
+                <div class="bk-pay-title">Reservar online</div>
+                <div class="bk-pay-desc">Pagamento seguro por transferência ou cartão antes da sessão.</div>
+              </label>
+
+            </div>
+            <span id="errPagamento">Por favor, escolha um m��todo de pagamento.</span>
+          </div>
+        </div>
+
+        <!-- ==================== SECÇÃO 5: CONFIRMAÇÃO ==================== -->
+        <div class="bk-section">
+          <div class="bk-section-head">
+            <div class="bk-step" aria-hidden="true">5</div>
+            <span class="bk-section-label">Confirmação</span>
+          </div>
+
+          <!-- Checkbox de termos -->
+          <div class="bk-field" id="wrapTermos">
+            <label class="bk-check-wrap" id="termosWrap">
+              <input type="checkbox" id="fTermos" name="termos" required>
+              <span class="bk-check-box" aria-hidden="true"></span>
+              <span class="bk-check-text">
+                Li e aceito os <a href="#" onclick="return false;">Termos e Condições</a>
+                e a <a href="#" onclick="return false;">Política de Privacidade</a>
+                do Yang Yun Xuan SPA. A marcação está sujeita a confirmação de disponibilidade.
+              </span>
+            </label>
+            <span class="bk-err" style="margin-left:2rem;">É necessário aceitar os termos para continuar.</span>
+          </div>
+
+          <!-- Botão de submissão -->
+          <div class="bk-submit-area">
+            <button type="submit" class="bk-submit" id="bkSubmit">
+              <!-- Ícone WhatsApp -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              Enviar Pedido de Marcação
+            </button>
+            <!-- Mensagem de erro de envio — mostrada apenas se Supabase falhar -->
+            <p id="bkSubmitError"
+              style="display:none; margin-top:1rem; color:#c0392b; font-size:0.875rem; line-height:1.5;"></p>
+            <p class="bk-submit-note">Entraremos em contacto em até 24 horas para confirmar a sua sessão.</p>
+          </div>
+        </div>
+
+      </form>
+    </div><!-- /.bk-form-area -->
+  </div><!-- /.booking-page -->
+
+  <!-- ===== OVERLAY DE SUCESSO ===== -->
+  <div class="bk-success" id="bkSuccess" role="dialog" aria-modal="true" aria-label="Pedido enviado com sucesso">
+    <div class="bk-success-inner">
+
+      <div class="bk-success-check" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </div>
+
+      <h2 class="bk-success-title">Pedido Recebido</h2>
+      <p class="bk-success-sub">
+        Recebemos o seu pedido de marcação. Para confirmar de imediato, envie os detalhes via WhatsApp — respondemos em
+        minutos.
+      </p>
+
+      <!-- Resumo da marcação — preenchido por JS -->
+      <div class="bk-success-card" id="bkSummaryCard"></div>
+
+      <div class="bk-success-actions">
+        <!-- Link WhatsApp com mensagem pré-preenchida — gerado por JS -->
+        <a href="#" id="bkWaLink" class="bk-wa-btn" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path
+              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+          </svg>
+          Confirmar via WhatsApp
+        </a>
+        <button class="bk-back-btn" id="bkBackBtn">Voltar ao formulário</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">Yang Yun Xuan SPA <span class="footer-brand-cn">养云轩</span></div>
+        <span>Rua da Palma 268, Lisboa</span>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 Yang Yun Xuan SPA. Todos os direitos reservados.</span>
+        <a href="index.html">Página inicial</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ================================================================
+       BOOKING PAGE — JavaScript
+       Funcionalidades: leitura de URL, preview de tratamento,
+       disponibilidade real via API, validação, submissão.
+    ================================================================ */
+
+    (function () {
+      'use strict';
+
+      /* ================================================================
+         CONFIGURAÇÃO DA API
+         Desenvolvimento : http://localhost:3001
+         Produção        : substitui pelo URL onde a API está deployada
+         ================================================================ */
+      var API_URL = 'http://localhost:3001';
+
+      /* ---------------------------------------------------------------
+         DADOS: Tratamentos disponíveis
+         Adicione ou ajuste aqui quando os preços/durações forem definidos.
+      --------------------------------------------------------------- */
+      var TREATMENTS = {
+        'massagem-relaxante': {
+          name: 'Massagem Relaxante',
+          cat: 'Ritual de Descanso',
+          dur: 'A confirmar',
+          price: 'A confirmar',
+          desc: 'Movimentos longos e fluidos para libertar tensão acumulada e devolver leveza ao corpo. Um momento de entrega total.',
+          wa: 'Massagem+Relaxante'
+        },
+        'massagem-terapeutica': {
+          name: 'Massagem Terapêutica',
+          cat: 'Trabalho em Profundidade',
+          dur: 'A confirmar',
+          price: 'A confirmar',
+          desc: 'Trabalho preciso sobre zonas de tensão e desconforto. Pressão localizada para alívio profundo e duradouro.',
+          wa: 'Massagem+Terapêutica'
+        },
+        'reflexologia': {
+          name: 'Reflexologia',
+          cat: 'Reflexos & Equilíbrio',
+          dur: 'A confirmar',
+          price: 'A confirmar',
+          desc: 'Pressão sobre pontos reflexos dos pés que correspondem a órgãos e sistemas do corpo. Profundamente relaxante.',
+          wa: 'Reflexologia'
+        },
+        'tui-na': {
+          name: 'Tui Na',
+          cat: 'Medicina Tradicional Chinesa',
+          dur: 'A confirmar',
+          price: 'A confirmar',
+          desc: 'Técnica manual da medicina tradicional chinesa. Pressão, mobilização articular e trabalho sobre meridianos.',
+          wa: 'Tui+Na'
+        },
+        'pedras-quentes': {
+          name: 'Pedras Quentes',
+          cat: 'Calor Terapêutico',
+          dur: 'A confirmar',
+          price: 'A confirmar',
+          desc: 'Pedras vulcânicas basálticas aquecidas em pontos específicos. Calor penetrante, relaxamento profundo.',
+          wa: 'Pedras+Quentes'
+        },
+        'gua-sha': {
+          name: 'Gua Sha',
+          cat: 'Técnica Tradicional',
+          dur: 'A confirmar',
+          price: 'A confirmar',
+          desc: 'Fricção controlada com instrumento liso. Activação da circulação e sensação imediata de desbloqueio.',
+          wa: 'Gua+Sha'
+        }
+      };
+
+      /* ---------------------------------------------------------------
+         DADOS: Horários disponíveis por tipo de dia
+         Ajuste conforme o horário real do spa.
+      --------------------------------------------------------------- */
+      var SLOTS_WEEKDAY = ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:30', '19:00'];
+      var SLOTS_WEEKEND = ['10:00', '11:30', '13:00', '14:30', '16:00', '17:30'];
+
+      /* ---------------------------------------------------------------
+         REFERÊNCIAS DOM
+      --------------------------------------------------------------- */
+      var navbar = document.getElementById('navbar');
+      var navToggle = document.getElementById('navToggle');
+      var navLinks = document.getElementById('navLinks');
+      var navOverlay = document.getElementById('navOverlay');
+      var form = document.getElementById('bookingForm');
+      var fTratamento = document.getElementById('fTratamento');
+      var fData = document.getElementById('fData');
+      var fHora = document.getElementById('fHora');
+      var fNome = document.getElementById('fNome');
+      var fEmail = document.getElementById('fEmail');
+      var fTelefone = document.getElementById('fTelefone');
+      var fPessoas = document.getElementById('fPessoas');
+      var fNotas = document.getElementById('fNotas');
+      var fTermos = document.getElementById('fTermos');
+      var bkCard = document.getElementById('bkCard');
+      var bkTreatName = document.getElementById('bkTreatName');
+      var bkTreatCat = document.getElementById('bkTreatCat');
+      var bkTreatDesc = document.getElementById('bkTreatDesc');
+      var bkTreatDur = document.getElementById('bkTreatDur');
+      var bkTreatPrice = document.getElementById('bkTreatPrice');
+      var slotsContainer = document.getElementById('slotsContainer');
+      var slotsLegend = document.getElementById('slotsLegend');
+      var errHora = document.getElementById('errHora');
+      var errPagamento = document.getElementById('errPagamento');
+      var bkSuccess = document.getElementById('bkSuccess');
+      var bkSummary = document.getElementById('bkSummaryCard');
+      var bkWaLink = document.getElementById('bkWaLink');
+      var bkBackBtn = document.getElementById('bkBackBtn');
+
+      /* ---------------------------------------------------------------
+         NAVBAR: menu mobile (lógica partilhada com app.js,
+         mas independente para esta página não carregar frames)
+      --------------------------------------------------------------- */
+      function initNavbar() {
+        if (!navToggle) return;
+
+        navToggle.addEventListener('click', function () {
+          var isOpen = navLinks.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', isOpen);
+          if (navOverlay) navOverlay.classList.toggle('active', isOpen);
+        });
+
+        if (navOverlay) {
+          navOverlay.addEventListener('click', function () {
+            navLinks.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+            navOverlay.classList.remove('active');
+          });
+        }
+
+        /* Scroll: garantir navbar sempre visível nesta página */
+        navbar.classList.add('scrolled');
+      }
+
+      /* ---------------------------------------------------------------
+         URL PARAM: lê ?tratamento= e pré-selecciona o campo
+         Exemplo: booking.html?tratamento=massagem-relaxante
+      --------------------------------------------------------------- */
+      function initFromURL() {
+        var params = new URLSearchParams(window.location.search);
+        var val = params.get('tratamento');
+        if (val && TREATMENTS[val]) {
+          fTratamento.value = val;
+          updateTreatmentCard(val);
+        }
+      }
+
+      /* ---------------------------------------------------------------
+         PREVIEW DO TRATAMENTO: actualiza sidebar e metadados
+      --------------------------------------------------------------- */
+      function updateTreatmentCard(id) {
+        var t = TREATMENTS[id];
+        if (!t) {
+          bkTreatName.textContent = '—';
+          bkTreatCat.textContent = '';
+          bkTreatDesc.textContent = 'Selecione um tratamento para ver os detalhes.';
+          bkTreatDur.textContent = '—';
+          bkTreatPrice.textContent = '—';
+          bkCard.classList.remove('has-treatment');
+          return;
+        }
+        bkTreatName.textContent = t.name;
+        bkTreatCat.textContent = t.cat;
+        bkTreatDesc.textContent = t.desc;
+        bkTreatDur.textContent = t.dur;
+        bkTreatPrice.textContent = t.price;
+        bkCard.classList.add('has-treatment');
+      }
+
+      /* ---------------------------------------------------------------
+         DATE PICKER: impede selecção de datas passadas
+      --------------------------------------------------------------- */
+      function initDatePicker() {
+        /* Define o mínimo como hoje */
+        var today = new Date();
+        var yyyy = today.getFullYear();
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var dd = String(today.getDate()).padStart(2, '0');
+        fData.min = yyyy + '-' + mm + '-' + dd;
+
+        fData.addEventListener('change', function () {
+          fHora.value = '';
+          clearSlotSelection();
+          errHora.style.display = 'none';
+          document.getElementById('wrapHora').classList.remove('is-error');
+          if (fData.value) {
+            fetchAndRenderSlots(fData.value);
+          } else {
+            slotsContainer.innerHTML = '<div class="bk-slots-placeholder">Escolha primeiro uma data para ver os horários disponíveis.</div>';
+            slotsLegend.style.display = 'none';
+          }
+        });
+      }
+
+      /* ---------------------------------------------------------------
+         DISPONIBILIDADE REAL: busca slots à API e renderiza
+      --------------------------------------------------------------- */
+      function fetchAndRenderSlots(dateStr) {
+        /* Mostra estado de loading enquanto aguarda */
+        slotsContainer.innerHTML = '<div class="bk-slots-placeholder">A verificar disponibilidade…</div>';
+        slotsLegend.style.display = 'none';
+
+        fetch(API_URL + '/api/slots?date=' + dateStr)
+          .then(function (r) {
+            if (!r.ok) throw new Error('Resposta inesperada da API');
+            return r.json();
+          })
+          .then(function (data) {
+            /* Converte formato API { hora, disponivel } para { time, occ } */
+            var slots = data.slots.map(function (s) {
+              return { time: s.hora, occ: !s.disponivel };
+            });
+            renderTimeSlots(slots);
+          })
+          .catch(function (err) {
+            console.error('Erro ao carregar slots:', err);
+            slotsContainer.innerHTML =
+              '<div class="bk-slots-placeholder" style="color:#c0392b;">' +
+              'Não foi possível carregar os horários. Verifique a ligação ou contacte-nos.' +
+              '</div>';
+          });
+      }
+
+      /* ---------------------------------------------------------------
+         RENDER DOS HORÁRIOS: cria os botões de slot
+      --------------------------------------------------------------- */
+      function renderTimeSlots(slots) {
+        var grid = document.createElement('div');
+        grid.className = 'bk-slots-grid';
+
+        slots.forEach(function (s) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'bk-slot' + (s.occ ? ' bk-slot--occ' : '');
+          btn.textContent = s.time;
+          btn.setAttribute('aria-label', s.time + (s.occ ? ' — ocupado' : ' — disponível'));
+          if (s.occ) btn.setAttribute('aria-disabled', 'true');
+
+          btn.addEventListener('click', function () {
+            if (s.occ) return;
+
+            var wasSelected = btn.classList.contains('bk-slot--sel');
+
+            /* Limpa selecção anterior */
+            clearSlotSelection();
+
+            if (!wasSelected) {
+              btn.classList.add('bk-slot--sel');
+              fHora.value = s.time;
+            }
+
+            /* Remove estado de erro */
+            errHora.style.display = 'none';
+            document.getElementById('wrapHora').classList.remove('is-error');
+          });
+
+          grid.appendChild(btn);
+        });
+
+        slotsContainer.innerHTML = '';
+        slotsContainer.appendChild(grid);
+        slotsLegend.style.display = 'flex';
+      }
+
+      function clearSlotSelection() {
+        var sel = slotsContainer.querySelectorAll('.bk-slot--sel');
+        sel.forEach(function (b) { b.classList.remove('bk-slot--sel'); });
+        fHora.value = '';
+      }
+
+      /* ---------------------------------------------------------------
+         CARTÕES DE PAGAMENTO: comportamento de selecção
+      --------------------------------------------------------------- */
+      function initPaymentCards() {
+        var radios = document.querySelectorAll('input[name="pagamento"]');
+        radios.forEach(function (radio) {
+          radio.addEventListener('change', function () {
+            /* Actualiza visual */
+            document.querySelectorAll('.bk-pay-card').forEach(function (card) {
+              card.classList.remove('is-sel');
+            });
+            radio.closest('.bk-pay-card').classList.add('is-sel');
+            errPagamento.classList.remove('visible');
+          });
+        });
+      }
+
+      /* ---------------------------------------------------------------
+         VALIDAÇÃO DO FORMULÁRIO
+         Retorna true se tudo válido, false caso contrário.
+      --------------------------------------------------------------- */
+      function validateForm() {
+        var valid = true;
+
+        /* Função auxiliar: marca um campo como erro ou limpa */
+        function setError(wrapId, condition) {
+          var wrap = document.getElementById(wrapId);
+          if (!wrap) return;
+          if (condition) {
+            wrap.classList.add('is-error');
+            valid = false;
+          } else {
+            wrap.classList.remove('is-error');
+          }
+        }
+
+        /* Tratamento */
+        setError('wrapTratamento', !fTratamento.value);
+
+        /* Data */
+        setError('wrapData', !fData.value);
+
+        /* Hora */
+        var semHora = !fHora.value;
+        document.getElementById('wrapHora').classList.toggle('is-error', semHora);
+        errHora.style.display = semHora ? 'block' : 'none';
+        if (semHora) valid = false;
+
+        /* Nome */
+        setError('wrapNome', !fNome.value.trim());
+
+        /* Email */
+        var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        setError('wrapEmail', !emailRe.test(fEmail.value.trim()));
+
+        /* Telefone */
+        setError('wrapTelefone', !fTelefone.value.trim());
+
+        /* Pagamento */
+        var semPag = !document.querySelector('input[name="pagamento"]:checked');
+        errPagamento.classList.toggle('visible', semPag);
+        if (semPag) valid = false;
+
+        /* Termos */
+        var semTermos = !fTermos.checked;
+        document.getElementById('wrapTermos').classList.toggle('is-error', semTermos);
+        document.getElementById('termosWrap').classList.toggle('is-error', semTermos);
+        if (semTermos) valid = false;
+
+        return valid;
+      }
+
+      /* ---------------------------------------------------------------
+         CONSTRUÇÃO DA MENSAGEM WHATSAPP
+         Pré-preenche a mensagem com todos os dados do formulário.
+      --------------------------------------------------------------- */
+      function buildWhatsAppMessage() {
+        var t = TREATMENTS[fTratamento.value] || {};
+        var pagCheck = document.querySelector('input[name="pagamento"]:checked');
+        var pagLabel = pagCheck
+          ? (pagCheck.value === 'local' ? 'Pagar no local' : 'Reservar online')
+          : '—';
+
+        /* Formata a data para leitura humana */
+        var dataLabel = '—';
+        if (fData.value) {
+          var d = new Date(fData.value + 'T12:00:00');
+          dataLabel = d.toLocaleDateString('pt-PT', {
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+          });
+        }
+
+        var linhas = [
+          'Olá! Gostaria de marcar uma sessão no Yang Yun Xuan SPA.',
+          '',
+          '🌿 *Tratamento:* ' + (t.name || '—'),
+          '📅 *Data:* ' + dataLabel,
+          '🕐 *Hora:* ' + (fHora.value || '—'),
+          '👤 *Nome:* ' + fNome.value.trim(),
+          '📧 *Email:* ' + fEmail.value.trim(),
+          '📞 *Telefone:* ' + fTelefone.value.trim(),
+          '👥 *Pessoas:* ' + fPessoas.value,
+          '💳 *Pagamento:* ' + pagLabel
+        ];
+
+        var notas = fNotas.value.trim();
+        if (notas) linhas.push('📝 *Notas:* ' + notas);
+
+        return encodeURIComponent(linhas.join('\n'));
+      }
+
+      /* ---------------------------------------------------------------
+         RESUMO DO SUCESSO: preenche o cartão de resumo no overlay
+      --------------------------------------------------------------- */
+      function buildSummaryCard() {
+        var t = TREATMENTS[fTratamento.value] || {};
+        var pagCheck = document.querySelector('input[name="pagamento"]:checked');
+        var pagLabel = pagCheck
+          ? (pagCheck.value === 'local' ? 'Pagar no local' : 'Reservar online')
+          : '—';
+
+        var dataLabel = '—';
+        if (fData.value) {
+          var d = new Date(fData.value + 'T12:00:00');
+          dataLabel = d.toLocaleDateString('pt-PT', {
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+          });
+        }
+
+        var rows = [
+          ['Tratamento', t.name || '—'],
+          ['Data', dataLabel],
+          ['Hora', fHora.value || '—'],
+          ['Nome', fNome.value.trim()],
+          ['Pessoas', fPessoas.value],
+          ['Pagamento', pagLabel]
+        ];
+
+        bkSummary.innerHTML = rows.map(function (r) {
+          return '<div class="bk-sum-row">' +
+            '<span class="bk-sum-label">' + r[0] + '</span>' +
+            '<span class="bk-sum-value">' + r[1] + '</span>' +
+            '</div>';
+        }).join('');
+      }
+
+      /* ---------------------------------------------------------------
+         SUBMISSÃO DO FORMULÁRIO
+      --------------------------------------------------------------- */
+      function handleSubmit(e) {
+        e.preventDefault();
+
+        if (!validateForm()) {
+          /* Faz scroll para o primeiro campo com erro */
+          var firstError = form.querySelector('.is-error .bk-input, .is-error .bk-select, .is-error .bk-slot, .is-error .bk-textarea');
+          if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        /* Desabilita botão durante processamento */
+        var btn = document.getElementById('bkSubmit');
+        var errDiv = document.getElementById('bkSubmitError');
+        btn.disabled = true;
+        btn.textContent = 'A enviar…';
+        errDiv.style.display = 'none';
+
+        var pagCheck = document.querySelector('input[name="pagamento"]:checked');
+
+        var BTN_HTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Enviar Pedido de Marcação';
+
+        fetch(API_URL + '/api/reservas', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tratamento: fTratamento.value,
+            data:       fData.value,
+            hora:       fHora.value,
+            nome:       fNome.value.trim(),
+            email:      fEmail.value.trim(),
+            telefone:   fTelefone.value.trim(),
+            pessoas:    parseInt(fPessoas.value, 10),
+            pagamento:  pagCheck ? pagCheck.value : null,
+            notas:      fNotas.value.trim() || null
+          })
+        })
+          .then(function (r) {
+            return r.json().then(function (d) { return { status: r.status, data: d }; });
+          })
+          .then(function (res) {
+            btn.disabled = false;
+            btn.innerHTML = BTN_HTML;
+
+            if (res.status === 409) {
+              /* Slot ocupado por outra pessoa entretanto — actualiza horários */
+              errDiv.textContent = res.data.message || 'Este horário acabou de ser reservado. Por favor, escolhe outro.';
+              errDiv.style.display = 'block';
+              fHora.value = '';
+              fetchAndRenderSlots(fData.value);
+              return;
+            }
+
+            if (!res.data.success) {
+              errDiv.textContent = 'Ocorreu um erro ao enviar o pedido. Tente novamente ou contacte-nos via WhatsApp (+351 966 451 758).';
+              errDiv.style.display = 'block';
+              return;
+            }
+
+            showSuccess();
+          })
+          .catch(function (err) {
+            console.error('Erro na submissão:', err);
+            btn.disabled = false;
+            btn.innerHTML = BTN_HTML;
+            errDiv.textContent = 'Sem ligação ou erro inesperado. Tente novamente ou contacte-nos via WhatsApp (+351 966 451 758).';
+            errDiv.style.display = 'block';
+          });
+      }
+
+      /* ---------------------------------------------------------------
+         MOSTRAR OVERLAY DE SUCESSO
+      --------------------------------------------------------------- */
+      function showSuccess() {
+        buildSummaryCard();
+        bkWaLink.href = 'https://wa.me/351966451758?text=' + buildWhatsAppMessage();
+        bkSuccess.classList.add('is-visible');
+        bkSuccess.scrollTop = 0;
+        document.body.style.overflow = 'hidden';
+      }
+
+      /* ---------------------------------------------------------------
+         VOLTAR AO FORMULÁRIO (a partir do overlay de sucesso)
+      --------------------------------------------------------------- */
+      function hideSuccess() {
+        bkSuccess.classList.remove('is-visible');
+        document.body.style.overflow = '';
+      }
+
+      /* ---------------------------------------------------------------
+         INICIALIZAÇÃO
+      --------------------------------------------------------------- */
+      function init() {
+        initNavbar();
+        initFromURL();
+        initDatePicker();
+        initPaymentCards();
+
+        /* Actualiza o cartão da sidebar ao mudar o select */
+        fTratamento.addEventListener('change', function () {
+          updateTreatmentCard(fTratamento.value);
+          /* Remove erro se existia */
+          document.getElementById('wrapTratamento').classList.remove('is-error');
+        });
+
+        /* Submissão */
+        form.addEventListener('submit', handleSubmit);
+
+        /* Botão "Voltar ao formulário" no overlay */
+        bkBackBtn.addEventListener('click', hideSuccess);
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+
+    })();
+  </script>
+
+</body>
+
+</html>
